@@ -1,0 +1,34 @@
+name: Bug report
+description: Something isn't working, or a page came out wrong.
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+      description: What were you doing, what did you expect, and what happened instead?
+    validations:
+      required: true
+  - type: textarea
+    id: details
+    attributes:
+      label: Details
+      description: Describe the page rather than attaching files, like "a page I saved on my iPhone is missing" or "a page I read still shows as unread". Please don't paste your exported files or the links in your Reading List.
+  - type: input
+    id: app
+    attributes:
+      label: The app you're importing into
+      description: If an exported file is the problem, like Linkding, Wallabag or Readwise Reader.
+  - type: input
+    id: version
+    attributes:
+      label: Reading List Export version
+      description: Menu bar icon → About Reading List Export, or `reading-list-export --version`.
+    validations:
+      required: true
+  - type: input
+    id: macos
+    attributes:
+      label: macOS and Safari versions
+    validations:
+      required: true

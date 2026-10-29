@@ -1,0 +1,106 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Run tests
+        run: swift test
+
+      - name: Build the app
+        run: scripts/build-app.sh
+
+      - name: Check the app has only the sandbox, Safari's bookmarks file read-only and your folder
+        run: |
+          entitlements="$(codesign -d --entitlements - --xml "build/Reading List Export.app" 2>/dev/null)"
+          plist="$(mktemp)"
+          printf '%s' "$entitlements" > "$plist"
+          if [ "$(/usr/libexec/PlistBuddy -c "Print :com.apple.security.app-sandbox" "$plist" 2>/dev/null)" != "true" ]; then
+            echo "::error::Reading List Export must run in the App Sandbox."
+            exit 1
+          fi
+          others="$(grep -o "<key>[^<]*</key>" <<< "$entitlements" | sed -E 's#</?key>##g' | grep -v \
+            -e "^com.apple.security.app-sandbox$" \
+            -e "^com.apple.security.temporary-exception.files.home-relative-path.read-only$" \
+            -e "^com.apple.security.files.user-selected.read-write$" \
+            -e "^com.apple.security.files.bookmarks.app-scope$" || true)"
+          if [ -n "$others" ]; then
+            echo "$others"
+            echo "::error::Reading List Export must have no entitlements besides the App Sandbox, Safari's bookmarks file read-only and the folder you choose."
+            exit 1
+          fi
+          files="$(grep -o "<string>[^<]*</string>" <<< "$entitlements")"
+          if [ "$files" != "<string>/Library/Safari/Bookmarks.plist</string>" ]; then
+            echo "$files"
+            echo "::error::The only read-only path must be Safari's bookmarks file, not its folder."
+            exit 1
+          fi
+          echo "Sandboxed, with Safari's bookmarks file read-only, the folder you choose, and nothing else."
+
+      - name: Check the app never uses the network, other apps, input or the screen
+        run: |
+          pattern='URLSession|NWConnection|CFSocket|NSWorkspace[^)]*\.open\(|openURL|openApplication|LSOpen|Process\(\)|posix_spawn|NSTask|CGEvent(Tap|PostToPid)|tapCreate|AXIsProcessTrusted|AXUIElement|CGWindowListCreateImage|SCShareableContent|NSAppleScript|NSEvent\.addGlobalMonitor|WKWebView|LPMetadataProvider|NSURLConnection|NWListener|NWBrowser|CFStream|getaddrinfo|\bsocket\(|\bconnect\(|contentsOf: *URL\(string|Process\.run|SMJobBless'
+          # The one page it opens is the Full Disk Access page in System Settings.
+          found="$(grep -rnE "$pattern" Sources | grep -v 'NSWorkspace.shared.open(URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_AllFiles")!)' || true)"
+          if [ -n "$found" ]; then
+            echo "$found"
+            echo "::error::Reading List Export must not use the network, open URLs, start programs, control other apps, or read input or the screen."
+            exit 1
+          fi
+          echo "No networking, URL opening besides Privacy settings, child processes, Apple Events, event taps, Accessibility or screen capture."
+
+      - name: Check there are no dependencies
+        run: |
+          if grep -nE '\.package\(' Package.swift; then
+            echo "::error::Reading List Export has no dependencies, so every line that runs is in this repository."
+            exit 1
+          fi
+          echo "No dependencies."
+
+      - name: Check nothing is ever deleted
+        run: |
+          pattern='removeItem|trashItem|recycle\(|unlink\(|rmdir\(|ftruncate|truncate\(|replaceItem|\bkill\('
+          if grep -rnE "$pattern" Sources; then
+            echo "::error::Reading List Export must never delete, replace or truncate a file."
+            exit 1
+          fi
+          echo "Nothing is deleted."
+
+      - name: Check only the bookmarks reader, the exporter and the lock touch files
+        run: |
+          reads='Data\(contentsOf|contents\(atPath|String\(contentsOf|FileHandle|fopen\(|\bopen\(|mmap\(|sqlite3_open|NSDictionary\(contentsOf'
+          writes='\.write\(to:|createFile|copyItem|moveItem|linkItem|createDirectory|setAttributes|createSymbolicLink'
+          allowed=(-e "^Sources/ReadingListCore/Bookmarks.swift:" -e "^Sources/ReadingListCore/Exporter.swift:" -e "^Sources/ReadingListCore/Lock.swift:")
+          # NSWorkspace's open( is the Privacy settings page, checked above.
+          found="$(grep -rnE "$reads|$writes" Sources | grep -v "${allowed[@]}" | grep -v 'NSWorkspace.shared.open(URL(string: "x-apple.systempreferences:' || true)"
+          if [ -n "$found" ]; then
+            echo "$found"
+            echo "::error::Only Bookmarks.swift may read Safari, and only Exporter.swift and Lock.swift's lock file may write."
+            exit 1
+          fi
+          if grep -nE "\.write\(to:|createFile|createDirectory" Sources/ReadingListCore/Bookmarks.swift; then
+            echo "::error::Bookmarks.swift must only ever read."
+            exit 1
+          fi
+          echo "Files are only read by Bookmarks.swift and written by Exporter.swift and Lock.swift."
+
+      - name: Check nothing else in Safari is ever read
+        run: |
+          # History, open tabs, Tab Groups, passwords, form data and offline archives are Safari's
+          # own. Only the Reading List in Bookmarks.plist is read.
+          pattern='History\.db|SafariTabs|CloudTabs|RecentlyClosedTabs|LastSession|Form Values|ReadingListArchives|TopSites|PasswordBreach|Downloads\.plist|LocalStorage|Databases/|Favicon'
+          if grep -rnE "$pattern" Sources; then
+            echo "::error::Reading List Export must never read anything in Safari besides the Reading List."
+            exit 1
+          fi
+          echo "Only Safari's bookmarks file is named."

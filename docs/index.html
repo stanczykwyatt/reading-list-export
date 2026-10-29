@@ -1,0 +1,538 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Reading List Export: export your Safari Reading List to Markdown, bookmarks and CSV on Mac</title>
+  <meta name="description" content="Reading List Export is a free, open-source Mac menu bar app that exports your Safari Reading List, read and unread, as a Markdown checklist, a bookmarks file Linkding, Karakeep and Raindrop.io import, an Instapaper-style CSV for Wallabag and Readwise Reader, and JSON. Only what's new on each run, read-only and with no internet access.">
+  <meta name="keywords" content="export safari reading list, safari reading list export mac, safari reading list to markdown, safari reading list to wallabag, safari reading list to linkding, pocket alternative, leaving pocket, safari reading list obsidian, menu bar app">
+  <link rel="canonical" href="https://stanczykwyatt.github.io/reading-list-export/">
+  <link rel="icon" href="icon.png">
+  <link rel="apple-touch-icon" href="icon.png">
+  <meta name="theme-color" content="#0d0f12">
+  <meta name="color-scheme" content="dark">
+
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Reading List Export">
+  <meta property="og:title" content="Reading List Export">
+  <meta property="og:description" content="Your Safari Reading List as Markdown, bookmarks and CSV. Move years of saved pages into Wallabag, Linkding, Readwise Reader or your notes. Free, open source, read-only.">
+  <meta property="og:url" content="https://stanczykwyatt.github.io/reading-list-export/">
+  <meta property="og:image" content="https://stanczykwyatt.github.io/reading-list-export/social.png">
+  <meta property="og:image:width" content="1280">
+  <meta property="og:image:height" content="640">
+  <meta property="og:image:alt" content="Reading List Export: your Safari Reading List as Markdown, bookmarks and CSV.">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Reading List Export",
+    "description": "A read-only Mac menu bar app that exports your Safari Reading List as a Markdown checklist, a bookmarks file, an Instapaper-style CSV and JSON, adding only what's new on each run.",
+    "operatingSystem": "macOS 14 or later",
+    "applicationCategory": "UtilitiesApplication",
+    "url": "https://stanczykwyatt.github.io/reading-list-export/",
+    "downloadUrl": "https://github.com/stanczykwyatt/reading-list-export/releases/latest/download/Reading-List-Export.zip",
+    "softwareVersion": "0.1.0",
+    "datePublished": "2026-11-10",
+    "dateModified": "2026-11-10",
+    "releaseNotes": "https://github.com/stanczykwyatt/reading-list-export/releases/tag/v0.1.0",
+    "featureList": [
+      "Exports every page in your Safari Reading List with its title, address, site, date added, preview and read status",
+      "A bookmarks file that Linkding, Karakeep, Raindrop.io and browsers import, with unread pages marked",
+      "An Instapaper-style CSV that Wallabag and Readwise Reader import",
+      "A Markdown checklist with unread pages as open tasks and read ones checked off",
+      "Only what's new on each run, and pages stay in the export after you clear them from Safari",
+      "Files you edit are never overwritten",
+      "Search the Reading List by any word, and a command line tool",
+      "Read-only, with no internet access, enforced by the macOS App Sandbox"
+    ],
+    "image": "https://stanczykwyatt.github.io/reading-list-export/icon.png",
+    "screenshot": "https://stanczykwyatt.github.io/reading-list-export/screenshot-dark.png",
+    "license": "https://opensource.org/licenses/MIT",
+    "isAccessibleForFree": true,
+    "author": { "@type": "Person", "name": "Wyatt Stanczyk", "url": "https://wyattstanczyk.com" },
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "How do I export my Safari Reading List on a Mac?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Reading List Export reads your Reading List from Safari's bookmarks file and saves it as a bookmarks file, a Markdown checklist, an Instapaper-style CSV and JSON, with each page's title, address, date added, preview and whether you've read it." }
+      },
+      {
+        "@type": "Question",
+        "name": "I left Pocket. Can I move my Safari Reading List to Wallabag, Linkding or Readwise Reader?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Yes. Linkding, Karakeep and Raindrop.io import the bookmarks file, and Linkding keeps unread pages unread. Wallabag and Readwise Reader import the CSV through their Instapaper import." }
+      },
+      {
+        "@type": "Question",
+        "name": "Does it include pages I saved on my iPhone?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Yes, once iCloud has synced them to Safari on your Mac. Safari on the Mac and iPhone share one Reading List when Safari is turned on in iCloud on both." }
+      },
+      {
+        "@type": "Question",
+        "name": "Will Reading List Export change or delete anything in Safari?",
+        "acceptedAnswer": { "@type": "Answer", "text": "No. The App Sandbox only lets it read Safari's bookmarks file, and blocks writing there. It never deletes anything, and never overwrites a file you've edited." }
+      },
+      {
+        "@type": "Question",
+        "name": "Why does Reading List Export need Full Disk Access?",
+        "acceptedAnswer": { "@type": "Answer", "text": "macOS keeps Safari's data in a protected folder no other app can read without it. Reading List Export's App Sandbox still limits it to Safari's bookmarks file, read-only, plus the export folder you choose. Your history, tabs and passwords stay out of reach." }
+      }
+    ]
+  }
+  </script>
+
+  <style>
+    :root {
+      --gap: clamp(12px, 4.5vmin, 72px);
+      --inset: clamp(6px, 1.1vmin, 12px);
+      --radius: clamp(22px, 3.4vmin, 38px);
+      --ice: #9ed1ff;
+      --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+      --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+    }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      background: #0d0f12;
+      color: #fff;
+      font: 16px/1.5 var(--sans);
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: inherit; }
+    a:focus-visible { outline: 2px solid #fff; outline-offset: 3px; border-radius: 6px; }
+
+    /* Cool silver light behind the glass, with a faint lattice. */
+    .scene {
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(40% 36% at 16% 20%, rgba(214, 226, 242, 0.62), transparent 70%),
+        radial-gradient(36% 34% at 86% 24%, rgba(150, 174, 206, 0.52), transparent 72%),
+        radial-gradient(44% 40% at 70% 88%, rgba(190, 206, 228, 0.46), transparent 70%),
+        radial-gradient(30% 28% at 24% 84%, rgba(112, 134, 166, 0.42), transparent 70%),
+        linear-gradient(180deg, #141820, #0d0f12);
+    }
+    .scene::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+      background-size: 56px 56px;
+      -webkit-mask-image: radial-gradient(ellipse at center, #000 20%, transparent 78%);
+      mask-image: radial-gradient(ellipse at center, #000 20%, transparent 78%);
+    }
+
+    .glass {
+      position: fixed;
+      inset: var(--gap);
+      border-radius: var(--radius);
+      background: rgba(16, 19, 24, 0.46);
+      -webkit-backdrop-filter: blur(28px) saturate(140%);
+      backdrop-filter: blur(28px) saturate(140%);
+      box-shadow: 0 30px 90px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+    }
+    .edge {
+      position: absolute;
+      inset: var(--inset);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: calc(var(--radius) - var(--inset));
+      pointer-events: none;
+    }
+    .content {
+      position: absolute;
+      inset: var(--inset);
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      padding: clamp(16px, 3vmin, 30px) clamp(18px, 4vmin, 40px);
+      scrollbar-width: thin;
+    }
+
+    .label {
+      font: 12px/1.4 var(--mono);
+      letter-spacing: 0.06em;
+      color: rgba(255, 255, 255, 0.55);
+      text-decoration: none;
+    }
+    a.label:hover { color: #fff; }
+    .bar { display: flex; justify-content: space-between; gap: 12px; }
+    @media (max-width: 400px) {
+      .bar .new { display: none; }
+    }
+
+    .center {
+      min-height: calc(100% - 40px);
+      padding: clamp(10px, 3vh, 28px) 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+    .title { display: flex; flex-direction: column; align-items: center; margin-bottom: 8px; }
+    .icon { width: clamp(56px, 9vh, 76px); height: auto; filter: drop-shadow(0 10px 24px rgba(0, 0, 0, 0.45)); }
+    h1 {
+      margin: clamp(10px, 2vh, 18px) 0 0;
+      font-size: clamp(36px, min(6.6vw, 8.4vh), 70px);
+      font-weight: 600;
+      line-height: 1;
+      letter-spacing: -0.035em;
+    }
+    .lede { margin: 0 0 clamp(16px, 3.4vh, 28px); max-width: 34em; font-size: clamp(17px, 2.2vw, 20px); color: rgba(255, 255, 255, 0.72); }
+
+    /* A looping demo: export from the menu bar, the files appear, and the note opens with every
+       page. Without JavaScript, or with reduced motion, it shows the finished scene. */
+    .demo { margin-bottom: clamp(18px, 3.6vh, 30px); }
+    .desk {
+      position: relative;
+      width: min(480px, 84vw);
+      aspect-ratio: 16 / 10;
+      max-height: 34vh;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 16px;
+      background:
+        radial-gradient(60% 60% at 20% 30%, rgba(214, 226, 242, 0.22), transparent 70%),
+        radial-gradient(50% 50% at 85% 80%, rgba(150, 174, 206, 0.2), transparent 70%),
+        rgba(255, 255, 255, 0.04);
+      box-shadow: 0 14px 36px rgba(0, 0, 0, 0.28);
+      overflow: hidden;
+      text-align: left;
+      font-size: clamp(9px, 1.5vmin, 12px);
+    }
+    .menubar {
+      position: absolute;
+      inset: 0 0 auto;
+      height: 18px;
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 9px;
+      padding: 0 10px;
+      background: rgba(0, 0, 0, 0.35);
+    }
+    .menubar i { width: 10px; height: 6px; border-radius: 2px; background: rgba(255, 255, 255, 0.35); }
+    .menubar svg { width: 13px; height: 13px; overflow: visible; }
+    .win {
+      position: absolute;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 9px;
+      background: #262a31;
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.4);
+      padding: 24px 10px 10px;
+      line-height: 1.6;
+    }
+    .win::before {
+      content: "";
+      position: absolute;
+      top: 8px;
+      left: 9px;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #ff5f57;
+      box-shadow: 11px 0 #febc2e, 22px 0 #28c840;
+    }
+    .notes { left: 4%; top: 13%; width: 70%; height: 82%; display: flex; gap: 8px; padding-top: 22px; overflow: hidden; }
+    .notes .side { flex: 0 0 38%; border-radius: 6px; background: rgba(255, 255, 255, 0.05); padding: 6px; overflow: hidden; }
+    .notes .side b { display: block; color: var(--ice); font-weight: 600; margin-bottom: 3px; }
+    .notes .file { display: none; padding: 2px 4px; border-radius: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .notes .file.shown { display: block; animation: land 0.25s ease-out; }
+    @keyframes land {
+      from { opacity: 0; transform: translateY(-4px); }
+      to { opacity: 1; transform: none; }
+    }
+    .notes .file small { display: block; opacity: 0.5; font-size: 0.85em; }
+    .notes .file.open { background: rgba(47, 111, 224, 0.4); }
+    .notes .note { flex: 1; min-width: 0; opacity: 0; transition: opacity 0.25s; line-height: 1.45; }
+    .is-note .notes .note { opacity: 1; }
+    .notes .note h3 { margin: 0 0 1px; font-size: 1.1em; }
+    .notes .note .when { display: block; opacity: 0.5; font-size: 0.85em; margin-bottom: 5px; }
+    .notes .note p { margin: 0 0 3px; color: rgba(255, 255, 255, 0.82); display: flex; gap: 6px; }
+    .notes .note p b { font-family: var(--mono); color: var(--ice); min-width: 1.8em; text-align: right; }
+    .notes .note h4 { margin: 6px 0 3px; font-size: 1em; }
+    .menu {
+      position: absolute;
+      right: 8px;
+      top: 22px;
+      width: 50%;
+      padding: 6px;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 9px;
+      background: #2b2d34;
+      box-shadow: 0 14px 30px rgba(0, 0, 0, 0.5);
+      opacity: 0;
+      transform: translateY(-4px);
+      transition: opacity 0.15s, transform 0.2s;
+    }
+    .is-open .menu { opacity: 1; transform: none; }
+    .menu .muted { color: rgba(255, 255, 255, 0.45); padding: 2px 6px; }
+    .menu .row { padding: 3px 6px; border-radius: 6px; }
+    .menu .row.go { background: #2f6fe0; }
+    @media (prefers-reduced-motion: reduce) {
+      .demo *, .demo *::before, .demo *::after { transition: none !important; }
+    }
+
+    .actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-bottom: 16px; }
+    .button {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 11px 22px;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      border-radius: 999px;
+      font-size: 15px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: border-color 0.15s, background-color 0.15s;
+    }
+    .button:hover { border-color: rgba(255, 255, 255, 0.6); }
+    .button .star { width: 15px; height: 15px; fill: #fff; }
+    .button.solid { border-color: #fff; background: #fff; color: #0d0f12; }
+    .button.solid:hover { background: rgba(255, 255, 255, 0.86); }
+
+    .thanks { margin: 0 0 14px; font-size: 14px; color: rgba(255, 255, 255, 0.75); animation: drop 0.4s ease-out both; }
+    @keyframes drop {
+      from { opacity: 0; transform: translateY(-12px); }
+      to { opacity: 1; transform: none; }
+    }
+
+    /* What you get and what a note holds, then questions people search for, below the fold. */
+    .section {
+      width: min(720px, 100%);
+      margin: clamp(20px, 5vh, 48px) auto clamp(8px, 2vh, 16px);
+      display: grid;
+      gap: 10px;
+    }
+    .section h2 { margin: 0 0 6px; font-size: 22px; font-weight: 600; letter-spacing: -0.02em; text-align: center; }
+    .shot { width: 100%; height: auto; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.14); box-shadow: 0 14px 36px rgba(0, 0, 0, 0.35); }
+    .verdicts { display: grid; gap: 8px; margin: 6px 0 0; padding: 0; list-style: none; }
+    .verdicts li {
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.04);
+      padding: 10px 16px;
+      color: rgba(255, 255, 255, 0.72);
+      font-size: 15px;
+    }
+    .verdicts b { color: #fff; }
+    .verdicts .key b { color: var(--ice); }
+    .section details {
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.04);
+      padding: 12px 16px;
+    }
+    .section summary { cursor: pointer; font-weight: 600; }
+    .section details p { margin: 8px 0 0; color: rgba(255, 255, 255, 0.72); font-size: 15px; }
+    .sample {
+      margin: 0;
+      padding: 14px 16px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 14px;
+      background: rgba(0, 0, 0, 0.28);
+      font: 13px/1.55 var(--mono);
+      color: rgba(255, 255, 255, 0.78);
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+    }
+    .sample .dim { color: rgba(255, 255, 255, 0.42); }
+    .sample .time { color: var(--ice); }
+    .verdicts code, .section details code { font: 0.92em var(--mono); color: #fff; }
+
+    .foot { display: grid; gap: 4px; margin-top: clamp(16px, 3vh, 28px); text-align: center; }
+    .foot p { margin: 0; font: 11px/1.6 var(--mono); letter-spacing: 0.03em; color: rgba(255, 255, 255, 0.4); }
+    .foot a { color: rgba(255, 255, 255, 0.7); }
+
+    /* On shorter screens the icon moves beside the name, so the top section still fits. */
+    @media (max-height: 760px), (max-width: 480px) {
+      .title { flex-direction: row; gap: clamp(10px, 1.6vh, 16px); margin-top: clamp(4px, 1vh, 10px); }
+      .icon { width: clamp(36px, min(6.4vw, 7.6vh), 58px); }
+      h1 { margin: 0; }
+    }
+  </style></head>
+<body>
+  <div class="scene" aria-hidden="true"></div>
+
+  <main class="glass">
+    <div class="edge" aria-hidden="true"></div>
+    <div class="content">
+      <nav class="bar" aria-label="Site">
+        <a class="label" href="https://github.com/stanczykwyatt/reading-list-export/releases/tag/v0.1.0">reading list export · v0.1<span class="new"> · what's new</span></a>
+        <a class="label" href="https://github.com/stanczykwyatt/reading-list-export">github ↗</a>
+      </nav>
+
+      <section class="center">
+        <div class="title">
+          <img class="icon" src="icon.png" alt="" width="76" height="76">
+          <h1>Reading List Export</h1>
+        </div>
+        <p class="lede">Every page in your Safari Reading List, read or unread, as Markdown, a bookmarks file and a CSV that read-later apps import. For years of saved links, or a new home after Pocket.</p>
+
+        <div class="demo is-open is-note" role="img" aria-label="Demo: from the Reading List Export menu bar icon, Export 14 New Pages is chosen. Reading List.md, Reading List.html and Reading List.csv appear in a notes app, and Reading List.md opens with unread pages as open tasks and read ones checked off.">
+          <div class="desk" aria-hidden="true">
+            <div class="menubar">
+              <svg viewBox="0 0 20 16">
+                <rect x="4.6" y="1.2" width="10.8" height="13.6" rx="1.8" fill="none" stroke="#fff" stroke-width="1.2"/>
+                <path d="M7 1.2 H10.2 V7.2 L8.6 5.8 L7 7.2 Z" fill="#fff"/>
+                <rect x="7" y="8.4" width="5" height="1.2" rx="0.6" fill="#fff"/>
+                <rect x="7" y="10.6" width="6.6" height="1.2" rx="0.6" fill="#fff"/>
+                <rect x="7" y="12.8" width="4.2" height="1.2" rx="0.6" fill="#fff"/>
+              </svg>
+              <i></i><i></i><i></i>
+            </div>
+            <div class="win notes">
+              <div class="side">
+                <b>Reading</b>
+                <span class="file shown open">Reading List.md<small>14 pages · 8 unread</small></span>
+                <span class="file shown">Reading List.html<small>for Linkding</small></span>
+                <span class="file shown">Reading List.csv<small>for Wallabag</small></span>
+              </div>
+              <div class="note">
+                <h3>Reading List</h3>
+                <span class="when">8 unread · 6 read · from Safari</span>
+                <h4>Unread</h4>
+                <p><b>☐</b>Ferry timetables, explained</p>
+                <p><b>☐</b>A field guide to city lichens</p>
+                <h4>Read</h4>
+                <p><b>☑</b>How bridges are inspected</p>
+              </div>
+            </div>
+            <div class="menu">
+              <div class="muted">8 unread · 6 read</div>
+              <div class="row go">Export 14 New Pages</div>
+              <div class="row">Save as Bookmarks File…</div>
+              <div class="row">Open Reading List Export…</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="actions">
+          <a class="button solid" href="https://github.com/stanczykwyatt/reading-list-export/releases/latest/download/Reading-List-Export.zip">Download for Mac</a>
+          <a class="button" href="https://github.com/stanczykwyatt/reading-list-export">
+            <svg class="star" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1.4l1.95 4.02 4.43.6-3.23 3.08.79 4.4L8 11.38 4.06 13.5l.79-4.4L1.62 6.02l4.43-.6z"/></svg>
+            Star on GitHub
+          </a>
+        </div>
+        <p class="thanks" id="thanks" hidden>Thanks for downloading! If it helps you move your reading, a <a href="https://github.com/stanczykwyatt/reading-list-export">star on GitHub</a> helps other people find it.</p>
+        <p class="label">free · open source · macos 14+ · read-only · no internet access</p>
+      </section>
+
+      <section class="section" aria-labelledby="what-title">
+        <h2 id="what-title">What you get</h2>
+        <img class="shot" src="screenshot-dark.png" width="940" height="620" alt="The Reading List Export window: fourteen saved pages, each with its title, site, when it was added and read, and the first lines of the page, with unread pages marked by a blue dot and a Copy Link button on each." loading="lazy">
+        <ul class="verdicts">
+          <li class="key"><b>A bookmarks file</b> in the format every browser exports, which Linkding, Karakeep, Raindrop.io and browsers import. Linkding keeps your unread pages unread.</li>
+          <li><b>An Instapaper-style CSV</b> for Wallabag's and Readwise Reader's Instapaper import, with read pages archived.</li>
+          <li class="key"><b>A Markdown checklist</b>: unread pages as open tasks, read ones checked off, each with the preview Safari saved. Obsidian-friendly.</li>
+          <li><b>Only what's new</b>: each run adds new pages, keeps pages you've cleared from Safari, and leaves files you've edited alone.</li>
+          <li><b>Extras</b>: JSON, a note for each page, automatic export, a search across every word, and a <code>reading-list-export</code> command line tool.</li>
+        </ul>
+      </section>
+
+      <section class="section" aria-labelledby="note-title">
+        <h2 id="note-title">What the note looks like</h2>
+<pre class="sample"><span class="dim">---
+title: "Reading List"
+pages: 14
+unread: 8
+source: Safari Reading List
+tags:
+  - reading-list
+---</span>
+
+# Reading List
+
+## Unread
+
+- [ ] [How tide pools survive the winter](&lt;https://tidewatch.example.com/winter-pools&gt;) · <span class="time">added 2026-04-30</span>
+  &gt; Every January the pools freeze at the edges.
+
+## Read
+
+- [x] [Why trains run late in the snow](&lt;https://rails.example.net/snow-delays&gt;) · <span class="time">read 2026-04-29</span></pre>
+      </section>
+
+      <section class="section" aria-labelledby="faq-title">
+        <h2 id="faq-title">Questions</h2>
+        <details>
+          <summary>How do I get my Reading List out of Safari?</summary>
+          <p>Choose Save as Bookmarks File… from Reading List Export's menu bar icon, then import the file in your read-later or bookmark app. Or choose an export folder to keep Markdown, the bookmarks file and a CSV up to date.</p>
+        </details>
+        <details>
+          <summary>I left Pocket. Where can my Reading List go?</summary>
+          <p>Linkding, Karakeep and Raindrop.io import the bookmarks file, and Linkding keeps unread pages unread. Wallabag and Readwise Reader import the CSV through their Instapaper import. Or keep it all in Obsidian as a checklist.</p>
+        </details>
+        <details>
+          <summary>Does it export Tab Groups?</summary>
+          <p>Not yet. Safari keeps Tab Groups in a separate database from the Reading List, and they're planned for the next version.</p>
+        </details>
+        <details>
+          <summary>Why does it need Full Disk Access?</summary>
+          <p>macOS keeps Safari's data in a protected folder no other app can read without it. Reading List Export's App Sandbox still limits it to one file there, Safari's bookmarks file, read-only, plus the export folder you choose. Your history, tabs and passwords stay out of reach. <a href="https://github.com/stanczykwyatt/reading-list-export/blob/main/SECURITY.md">The details are in SECURITY.md</a>.</p>
+        </details>
+        <details>
+          <summary>Will it change or delete anything?</summary>
+          <p>No. It can only read Safari's bookmarks file. It never deletes anything, and never overwrites a file you've edited. It doesn't fetch pages either: you get the title, address and preview Safari saved, not the whole article.</p>
+        </details>
+      </section>
+
+      <footer class="foot">
+        <p>Also free: <a href="https://stanczykwyatt.github.io/show-desktop/">Show Desktop</a>, <a href="https://stanczykwyatt.github.io/copy-2fa/">Copy 2FA</a>, <a href="https://stanczykwyatt.github.io/who-stole-my-focus/">Who Stole My Focus</a>, <a href="https://stanczykwyatt.github.io/ai-footprint/">AI Footprint</a>, <a href="https://stanczykwyatt.github.io/memo-export/">Memo Export</a> and <a href="https://stanczykwyatt.github.io/podcast-export/">Podcast Export</a>.</p>
+        <p>Reading List Export collects no data, and this site has no cookies or tracking. MIT License. Not affiliated with Apple, Pocket, Instapaper, Obsidian or any app named here; their names belong to their owners. The pages in the demo are made up.</p>
+      </footer>
+    </div>
+  </main>
+
+  <script>
+    // After a download, ask for a star, which is when people are most glad to give one.
+    document.querySelector(".button.solid").addEventListener("click", () => {
+      document.getElementById("thanks").hidden = false;
+    });
+
+    // Plays the demo on a loop. The page starts on the finished scene, so it still makes sense
+    // without JavaScript or with reduced motion.
+    const demo = document.querySelector(".demo");
+    if (!matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      const files = [...demo.querySelectorAll(".file")];
+      const open = demo.querySelector(".file.open");
+      let timer;
+
+      const wait = (ms) => new Promise((done) => { timer = setTimeout(done, ms); });
+
+      async function play() {
+        demo.classList.remove("is-open", "is-note");
+        files.forEach((file) => file.classList.remove("shown"));
+        open.classList.remove("open");
+        await wait(900);
+        demo.classList.add("is-open");
+        await wait(1500);
+        demo.classList.remove("is-open");
+        for (const file of files) { await wait(280); file.classList.add("shown"); }
+        await wait(700);
+        open.classList.add("open");
+        demo.classList.add("is-note");
+        await wait(4200);
+        play();
+      }
+
+      // Starts over when the tab comes back, rather than catching up on missed steps.
+      document.addEventListener("visibilitychange", () => {
+        clearTimeout(timer);
+        if (!document.hidden) play();
+      });
+      play();
+    }
+  </script>
+</body>
+</html>
