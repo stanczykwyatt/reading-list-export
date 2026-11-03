@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>Reading List Export: export your Safari Reading List to Markdown, bookmarks and CSV on Mac</title>
+  <title>Reading List Export: Safari Reading List to Markdown and CSV</title>
   <meta name="description" content="Reading List Export is a free, open-source Mac menu bar app that exports your Safari Reading List, read and unread, as a Markdown checklist, a bookmarks file Linkding, Karakeep and Raindrop.io import, an Instapaper-style CSV for Wallabag and Readwise Reader, and JSON. Only what's new on each run, read-only and with no internet access.">
   <meta name="keywords" content="export safari reading list, safari reading list export mac, safari reading list to markdown, safari reading list to wallabag, safari reading list to linkding, pocket alternative, leaving pocket, safari reading list obsidian, menu bar app">
   <link rel="canonical" href="https://stanczykwyatt.github.io/reading-list-export/">
@@ -56,38 +56,53 @@
   }
   </script>
   <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    "mainEntity": [
-      {
-        "@type": "Question",
-        "name": "How do I export my Safari Reading List on a Mac?",
-        "acceptedAnswer": { "@type": "Answer", "text": "Reading List Export reads your Reading List from Safari's bookmarks file and saves it as a bookmarks file, a Markdown checklist, an Instapaper-style CSV and JSON, with each page's title, address, date added, preview and whether you've read it." }
-      },
-      {
-        "@type": "Question",
-        "name": "I left Pocket. Can I move my Safari Reading List to Wallabag, Linkding or Readwise Reader?",
-        "acceptedAnswer": { "@type": "Answer", "text": "Yes. Linkding, Karakeep and Raindrop.io import the bookmarks file, and Linkding keeps unread pages unread. Wallabag and Readwise Reader import the CSV through their Instapaper import." }
-      },
-      {
-        "@type": "Question",
-        "name": "Does it include pages I saved on my iPhone?",
-        "acceptedAnswer": { "@type": "Answer", "text": "Yes, once iCloud has synced them to Safari on your Mac. Safari on the Mac and iPhone share one Reading List when Safari is turned on in iCloud on both." }
-      },
-      {
-        "@type": "Question",
-        "name": "Will Reading List Export change or delete anything in Safari?",
-        "acceptedAnswer": { "@type": "Answer", "text": "No. The App Sandbox only lets it read Safari's bookmarks file, and blocks writing there. It never deletes anything, and never overwrites a file you've edited." }
-      },
-      {
-        "@type": "Question",
-        "name": "Why does Reading List Export need Full Disk Access?",
-        "acceptedAnswer": { "@type": "Answer", "text": "macOS keeps Safari's data in a protected folder no other app can read without it. Reading List Export's App Sandbox still limits it to Safari's bookmarks file, read-only, plus the export folder you choose. Your history, tabs and passwords stay out of reach." }
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "How do I get my Reading List out of Safari?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Choose Save as Bookmarks File… from Reading List Export's menu bar icon, then import the file in your read-later or bookmark app. Or choose an export folder to keep Markdown, the bookmarks file and a CSV up to date."
       }
-    ]
-  }
-  </script>
+    },
+    {
+      "@type": "Question",
+      "name": "I left Pocket. Where can my Reading List go?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Linkding, Karakeep and Raindrop.io import the bookmarks file, and Linkding keeps unread pages unread. Wallabag and Readwise Reader import the CSV through their Instapaper import. Or keep it all in Obsidian as a checklist."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Does it export Tab Groups?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Not yet. Safari keeps Tab Groups in a separate database from the Reading List, and they're planned for the next version."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Why does it need Full Disk Access?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "macOS keeps Safari's data in a protected folder no other app can read without it. Reading List Export's App Sandbox still limits it to one file there, Safari's bookmarks file, read-only, plus the export folder you choose. Your history, tabs and passwords stay out of reach. The details are in SECURITY.md."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Will it change or delete anything?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No. It can only read Safari's bookmarks file. It never deletes anything, and never overwrites a file you've edited. It doesn't fetch pages either: you get the title, address and preview Safari saved, not the whole article."
+      }
+    }
+  ]
+}
+</script>
 
   <style>
     :root {
