@@ -116,6 +116,8 @@ Each app's import changes now and then, so check its own help if a menu has move
 
 ## Install
 
+> **Tested so far:** the export code has been run against a real Safari Reading List file from the command line tool and from a sandboxed test build with the app's exact permissions. The signed app itself hasn't been tried with Full Disk Access turned on yet. If something doesn't work, please [open an issue](https://github.com/stanczykwyatt/reading-list-export/issues).
+
 1. [Download **Reading-List-Export.zip**](https://github.com/stanczykwyatt/reading-list-export/releases/latest/download/Reading-List-Export.zip) and unzip it.
 2. Move **Reading List Export** to your Applications folder and open it.
 3. Turn on Full Disk Access when it asks: **System Settings → Privacy & Security → Full Disk Access**, then switch on Reading List Export. The window has a button that opens the right page.
