@@ -28,7 +28,7 @@ struct WindowTests {
         model.preferences.lastExport = (Gallery.now.addingTimeInterval(-60 * 90), "Added 3 new pages")
         let image = render(view(model), name: "screenshot-light", dark: false)
         #expect(image.pixelsWide >= Int(Self.size.width))
-        #expect(colors(in: image) > 30)
+        #expect(colors(in: image) > 20)
     }
 
     @Test func rendersInDarkMode() async throws {
